@@ -1,4 +1,4 @@
-# CAITLibot
+# CAITLibot123
 
 CAITLibot is a tool for generating bespoke, student-led, AI-powered learning activities, designed for GCSE and A level students (aged 14-18).
 

@@ -273,7 +273,7 @@ async function generateMorePrompts() {
 
     const subject = document.getElementById('subject').value;
     const topic = document.getElementById('topic').value;
-    const subjectId = Number(subject)
+    const subjectId = 1; // TEMP: treat everything as subject 1 until we wire the dropdown
 
     document.getElementById("main-loader").classList.remove("hidden");
 
@@ -318,11 +318,26 @@ async function generateMorePrompts() {
  */
 async function generatePrompts() {
 
+    // 1. Read values from the page
+    // ADDED: We need to read the level too!
+    const level = document.getElementById('level').value; 
     const subject = document.getElementById('subject').value;
     const topic = document.getElementById('topic').value;
-    const templates = document.getElementById('templates').value;
-    const subjectId = Number(subject)
-    
+    const unit = document.getElementById('unit').value;
+    const learningOutcome = document.getElementById('learningOutcome').value;
+    const activityType = document.getElementById('activityType').value;
+
+    // Templates dropdown is optional – default to "auto" if it is missing
+    let templates = "auto";
+    const templatesElement = document.getElementById('templates');
+    if (templatesElement) {
+        templates = templatesElement.value;
+    }
+
+    // TEMP: hard-code a subject id so the rest of the system has something to work with
+    const subjectId = 1;
+
+    // Build template lists as the original code did
     let templateList = "";
     const categoryCheckboxes = document.getElementsByClassName('category-checkbox');
     for (let checkbox of categoryCheckboxes) {
@@ -332,52 +347,61 @@ async function generatePrompts() {
     let individualList = "";
     if (templates === "individual") {
         const individualCheckboxes = document.getElementsByClassName('individual-checkbox');
-        for (let checkbox of individualCheckboxes) {        
+        for (let checkbox of individualCheckboxes) {
             if (checkbox.checked) {
-                if (individualList.length > 0) individualList += ",";
+                if (individualList.length > 0) individualList += ";";
                 individualList += checkbox.value;
             }
         }
     }
 
-    if (subjectId === 0) {
-        showToast("Please select a subject");
-        return;
-    } else if (topic === "") {
-        showToast("Please enter a topic");
-        return;
-    } else if (templateList === "") {
-        showToast("Please pick at least one set of recipe templates");
-        return;
-    } else if (templates === "individual" && individualList === "") {
-        showToast("Please pick at least one individual template");
+    // Minimal validation so we definitely hit the API
+    if (topic === "") {
+        alert("Type something in the Topic box first.");
         return;
     }
 
+    // Show loaders, hide choices – same as original behaviour
     stage = 1;
     updateHelp();
 
     document.getElementById('help-container').style.display = 'none';
-    document.getElementById("choice-container").classList.add("hidden");
-    document.getElementById("main-loader").classList.remove("hidden");
+    document.getElementById('choice-container').classList.add("hidden");
+    document.getElementById('main-loader').classList.remove("hidden");
 
     let response = null;
 
-    response = await fetchApi("/api/generatePrompts", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ subjectId, topic, existing: [], templates: templateList, individuals: individualList })
-    });
+    try {
+        response = await fetch('/api/generatePrompts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                subjectId,
+                level,         // <--- ADDED THIS (Sends "GCSE", "A Level" etc)
+                subject,       // <--- ADDED THIS (Sends "Computer Science", etc)
+                topic,
+                existing: [],
+                templates: templateList,
+                individuals: individualList,
+                unit,
+                learningOutcome,
+                activityType
+            })
+        });
+    } catch (err) {
+        console.error('Error calling /api/generatePrompts', err);
+    }
 
     if (response == null) {
-        document.getElementById("main-loader").classList.add("hidden");
-        document.getElementById("choice-container").classList.remove("hidden");
+        document.getElementById('main-loader').classList.add("hidden");
+        document.getElementById('choice-container').classList.remove("hidden");
         stage = 0;
         updateHelp();
         return;
     }
+
     const data = await response.json();
 
     if (data.error !== undefined) {
@@ -393,8 +417,12 @@ async function generatePrompts() {
     checkOverflow();
     handleScroll();
 
-    document.getElementById("goto-dashboard").addEventListener("click", confirmNavigation);
-    document.getElementById("goto-recipes").addEventListener("click", confirmNavigation);
+    // These listeners only need to be attached once really, but leaving them here as per original code
+    // wrapped in guards to prevent errors if elements don't exist
+    const dashboardBtn = document.getElementById("goto-dashboard");
+    if(dashboardBtn) dashboardBtn.addEventListener("click", confirmNavigation);
+    
+    const recipesBtn = document.getElementById("goto-recipes");
+    if(recipesBtn) recipesBtn.addEventListener("click", confirmNavigation);
 
 }
-

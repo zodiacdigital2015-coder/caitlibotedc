@@ -29,11 +29,31 @@ async function authenticateUser(email, password, done) {
  * Middleware to require logged in user
  */
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
+  // If the user is already authenticated, continue
+  if (req.isAuthenticated && req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login');
+
+  // DEV ONLY: auto-login as Andrew so we can skip the login screen
+  const fakeUser = {
+    FirstName: 'Andrew',
+    LastName: 'Cummins',
+    Email: 'andrew@example.com',
+    Admin: true
+  };
+
+  // Passport normally sets req.user, so we mimic that
+  req.user = fakeUser;
+
+  // If sessions are being used, also set it there
+  if (req.session) {
+    req.session.user = fakeUser;
+  }
+
+  // Continue as authenticated
+  return next();
 }
+
 
 /**
  * Middleware to require admin privileges

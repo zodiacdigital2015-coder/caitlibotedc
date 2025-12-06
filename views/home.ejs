@@ -12,35 +12,35 @@
     <div class="home-container" id="home-container">
 
         <div class="home-header">
+            <div class="header-left">
+                <h1 class="siteTitle">Lamp<span style="font-weight:400">LighterEDC</span></h1>
+            </div>
 
-            <h1 class="siteTitle page-heading">
-                <%- siteTitle %>
-            </h1>
-            <h2 class="welcome"><%= user.FirstName.substr(0,1) + ". " + user.LastName %></h2>
-
-            <div id="title-adjacent" class="title-adjacent" style="font-style: italic; color: grey"><%- siteSubTitle %></div>
-    
-            <div class="float-right">
-                
-                <span class="btn btn-subtle btn-mini" id="show-help" style="display: none;">
-                    <span class="material-symbols-outlined">question_mark</span>
+            <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-weight: 600; color: #2d3748;">
+                    <%= user.FirstName.substr(0,1) + ". " + user.LastName %>
                 </span>
 
-                <% if (user.Admin) { %>
-                    <a href="/admin" class="btn btn-neutral btn-mini" id="goto-dashboard">
-                        <span class="material-symbols-outlined">settings</span>
+                <div class="action-buttons" style="display: flex; gap: 8px;">
+                    <span class="btn btn-neutral btn-mini" id="show-help" title="Help">
+                        <span class="material-symbols-outlined">help</span>
+                    </span>
+
+                    <% if (user.Admin) { %>
+                        <a href="/admin" class="btn btn-neutral btn-mini" id="goto-dashboard" title="Admin">
+                            <span class="material-symbols-outlined">settings</span>
+                        </a>
+                    <% } %>
+                    
+                    <a href="/recipes" class="btn btn-neutral btn-mini" id="goto-recipes" title="Saved Prompts">
+                        <span class="material-symbols-outlined">menu_book</span>
                     </a>
-                <% } %>
-                
-                <a href="/recipes" class="btn btn-neutral btn-mini" id="goto-recipes">
-                    <span class="material-symbols-outlined">menu_book</span>
-                </a>
 
-                <a href="/logout" class="btn btn-danger btn-mini" id="logout">
-                    <span class="material-symbols-outlined">logout</span>
-                </a>
+                    <a href="/logout" class="btn btn-danger btn-mini" id="logout" title="Log out">
+                        <span class="material-symbols-outlined">logout</span>
+                    </a>
+                </div>
             </div>        
-
         </div>
 
         <div id="start-again-container" class="hidden">            
@@ -49,11 +49,7 @@
                 <span class="material-symbols-outlined">arrow_back</span>
               </button>
             </div>
-                      
-            <div class="half right" id="toggle-container-2">   
-                                    
-            </div>
-            
+            <div class="half right" id="toggle-container-2"></div>
         </div>
         
         <div class="home-content" id="home-content">
@@ -71,87 +67,135 @@
 
             <div class="choice-container" id="choice-container">
                 
+                <div class="welcome-section" style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0;">
+                    <h2 style="font-size: 1.8rem; margin-bottom: 10px; color: #2d3748; font-weight: 600;">Welcome to Lamp Lighter EDC</h2>
+                    <p style="color: #718096; font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.5;">
+                        Create high-quality, structured AI prompts for your lessons in seconds. 
+                        Simply fill in the details below to generate resources tailored to your students.
+                    </p>
+                </div>
+
                 <div class="row">
-                    <div class="col-2"></div> 
-            
-                    <div class="col-2 dropdown-item">
+                    <div class="col-1"></div> 
+
+                    <div class="col-3 dropdown-item">
                         <label for="level" class="ingredients-label">Level:</label>
                         <select id="level" name="level" class="styled-input">
-                            <option value="GCSE">GCSE</option>
-                            <option value="A level">A level</option>                
+                            <option value="" disabled selected>Select Level</option>
+                            <option value="Entry Level">Entry Level</option>
+                            <option value="Level 1">Level 1</option>
+                            <option value="Level 2">Level 2</option>
+                            <option value="Level 3">Level 3</option>
+                            <option value="Level 4">Level 4</option>
+                            <option value="Level 5">Level 5</option>
                         </select>  
                     </div>  
-            
-            
-                    <div class="col-4 dropdown-item">
+
+                    <div class="col-7 dropdown-item">
                         <label for="subject" class="ingredients-label">Subject:</label>
-                        <select id="subject" name="subject" class="styled-input">                            
+                        <input
+                            id="subject"
+                            name="subject"
+                            class="styled-input"
+                            type="text"
+                            placeholder="e.g. GCSE Computer Science" />
+                    </div>  
+
+                    <div class="col-1"></div> 
+                </div>
+
+                <div class="row">
+                    <div class="col-1"></div> 
+
+                    <div class="col-5 dropdown-item">
+                        <label for="activityCategory" class="ingredients-label">Activity Category:</label>
+                        <select id="activityCategory" name="activityCategory" class="styled-input">
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="Assessments">Assessments</option>
+                            <option value="In Class Tasks">In Class Tasks</option>
+                            <option value="Research">Research</option>
+                            <option value="Practical Tasks">Practical Tasks</option>
+                            <option value="Feedback & Support">Feedback & Support</option>
                         </select>  
                     </div>  
-            
-                     <div class="col-2 dropdown-item">
-                            <label for="templates" class="ingredients-label">Recipe templates:</label>
-                            <select id="templates" name="templates" class="styled-input">
-                                <option value="auto">Automatic</option>
-                                <option value="categories">Categories</option>                                        
-                                <option value="individual">Individual</option>            
-                            </select>  
-                        </div>  
 
-                    <div class="col-2"></div> 
-                    
+                    <div class="col-5 dropdown-item">
+                        <label for="activityType" class="ingredients-label">Specific Task:</label>
+                        <select id="activityType" name="activityType" class="styled-input" disabled>
+                            <option value="">Select a category first...</option>
+                        </select>  
+                    </div>  
+
+                    <div class="col-1"></div> 
                 </div>
-            
 
-                <div id="categories" class="row hidden template-container">
-                    <div class="col-3">
-                        <div class="checkbox-container"><input type="checkbox" class="checkbox category-checkbox" id="checkboxC" value="C" checked><label class="checkbox-label category-label" for="checkboxC">Classic activities</label></div>
-                        <div class="checkbox-container"><input type="checkbox" class="checkbox category-checkbox" id="checkboxR" value="R"><label class="checkbox-label category-label" for="checkboxR">Rapid activities</label></div>
+                <div class="row">
+                    <div class="col-1"></div> 
+
+                    <div class="col-5 dropdown-item">
+                        <label for="unit" class="ingredients-label">Unit / module:</label>
+                        <input
+                            id="unit"
+                            name="unit"
+                            type="text"
+                            class="styled-input"
+                            autocomplete="off"
+                            placeholder="e.g. OCR L3 Unit 2, T Level Core Digital Support"
+                        />
                     </div>
-                    <div class="col-3">
-                        <div class="checkbox-container" style="margin-left: 10px;"><input type="checkbox" class="checkbox category-checkbox" id="checkboxX" value="X"><label class="checkbox-label category-label" for="checkboxX">Novel activities</label></div>
-                        <div class="checkbox-container" style="margin-left: 10px;"><input type="checkbox" class="checkbox category-checkbox" id="checkboxA" value="A"><label class="checkbox-label category-label" for="checkboxA">Creative arts</label></div>
+
+                    <div class="col-5 dropdown-item">
+                        <label for="learningOutcome" class="ingredients-label">Learning outcome:</label>
+                        <input
+                            id="learningOutcome"
+                            name="learningOutcome"
+                            type="text"
+                            class="styled-input"
+                            autocomplete="off"
+                            placeholder="e.g. LO2: Understand legal frameworks"
+                        />
                     </div>
-                    <div class="col-3">
-                        <div class="checkbox-container" style="margin-left: 15px;"><input type="checkbox" class="checkbox category-checkbox" id="checkboxH" value="H"><label class="checkbox-label category-label" for="checkboxH">Humanities</label></div>
-                        <div class="checkbox-container" style="margin-left: 15px;"><input type="checkbox" class="checkbox category-checkbox" id="checkboxL" value="L"><label class="checkbox-label category-label" for="checkboxL">Languages</label></div>
-                    </div>
-                    <div class="col-3">
-                        <div class="checkbox-container"><input type="checkbox" class="checkbox category-checkbox" id="checkboxS" value="S"><label class="checkbox-label category-label" for="checkboxS">Science & maths</label></div>
-                        <div class="checkbox-container"><input type="checkbox" class="checkbox category-checkbox" id="checkboxO" value="O"><label class="checkbox-label category-label" for="checkboxO">Social sciences</label></div>
-                    </div>                    
-                </div>          
-                
+
+                    <div class="col-1"></div>
+                </div>
+
+                <div id="categories" class="row hidden template-container"></div>          
                 <div id="template-picker" class="row hidden template-container">
                     <div class="col-12" id="template-list"></div>                    
                 </div>
 
                 <div class="row">
-                    <div class="col-2"></div> 
-            
-                    <div class="col-8 dropdown-item">
+                    <div class="col-1"></div> 
+                    <div class="col-10 dropdown-item">
                         <label for="topic" class="ingredients-label">Topic:</label>
                         <div class="topic-container">
-                            <textarea type="text" id="topic" name="topic" class="styled-input" autocomplete="off"></textarea>    
+                            <textarea
+                                id="topic"
+                                name="topic"
+                                class="styled-input"
+                                autocomplete="off"
+                                placeholder="Describe what you want activities for, e.g. 'Introduce binary for Level 2 IT students'. For more detailed guidance simply click the ? above"></textarea>    
                         </div>            
                     </div>
-                                
-                    <div class="col-2"></div> 
+                    <div class="col-1"></div> 
                 </div>  
 
                 <div class="row">
-                    <div class="col-4"></div> 
-            
-                    <div class="col-4 submit-button">
+                    <div class="col-12 submit-button">
                         <button class="btn btn-primary" id="generate-button">
-                            <div class="material-symbols-outlined response-icon">edit_note</div>
-                            Generate recipe ideas
+                            <div class="material-symbols-outlined response-icon">auto_awesome</div>
+                            Generate Teacher Prompt
                         </button>
                     </div>
-            
-                    <div class="col-4"></div> 
                 </div>
 
+                <div class="row">
+                    <div class="col-12" style="text-align: center; margin-top: 8px;">
+                        <p class="field-help" style="margin-top: 1rem; font-size: 0.9rem; color: #718096; text-align: center;">
+                            Lamp Lighter EDC will generate a structured, professional prompt that you can copy directly into ChatGPT, Claude, or Gemini.
+                        </p>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-1"></div> 
@@ -171,22 +215,31 @@
                         <div class="loader-container hidden" id="recipe-loader">
                             <div class="loader"></div>
                         </div>
-                        <div id="shared-recipes">
-                        </div>
-                        <div id="private-recipes">
-                        </div>
+                        <div id="shared-recipes"></div>
+                        <div id="private-recipes"></div>
                     </div>  
                     <div class="col-1"></div> 
                 </div>
             
             </div>
             
-             
-
             <% for (let i = 1; i <= MAX_PROMPTS_ON_DISPLAY; i++) { %>
 
             <div class="response-container hidden" id="response-container-<%= i %>">
-                <div class="response-text-container"  id="response-text-container-<%= i %>">
+                <div class="response-text-container" id="response-text-container-<%= i %>">
+                    
+                    <div class="instruction-box">
+                        <span class="material-symbols-outlined instruction-icon">info</span>
+                        <div>
+                            <strong>Next Steps:</strong>
+                            <p style="margin: 4px 0 0 0;">
+                                Copy the prompt below and paste it into your AI tool. 
+                                <br>
+                                <em>Tip: You can attach your own course documents (PDFs, PPTs) when pasting to give the AI more context!</em>
+                            </p>
+                        </div>
+                    </div>
+
                     <div class="response-heading">
                         <div class="response-heading-text" id="response-heading-text-<%= i %>"></div>
                         <div class="response-spec-button"><button id="spec-button-<%= i %>" class="btn btn-subtle btn-mini hidden"><span class="material-symbols-outlined">list_alt</span></button></div>                        
@@ -194,9 +247,11 @@
                             <div class="speech-bubble" id="response-reason-<%= i %>"></div>
                             <button id="reason-button-<%= i %>" class="btn btn-subtle btn-mini"><span class="material-symbols-outlined">psychology_alt</span></button>
                         </div>                        
-                        <div class="response-copy-button"><button id="copy-button-<%= i %>" class="btn btn-primary btn-mini"><span class="material-symbols-outlined">content_copy</span></button></div>                        
+                        <div class="response-copy-button"><button id="copy-button-<%= i %>" class="btn btn-primary btn-mini"><span class="material-symbols-outlined">content_copy</span> Copy</button></div>                        
                     </div>
+                    
                     <div class="response-text" id="response-text-<%= i %>" data-voteid="-1"></div>   
+                    
                     <div class="response-vote-buttons">
                         <div><button id="like-button-<%= i %>" class="vote-button like-button btn btn-transparent btn-nano"><span class="material-symbols-outlined">thumb_up</span></button></div> 
                         <div><button id="dislike-button-<%= i %>" class="vote-button dislike-button btn btn-transparent btn-nano"><span class="material-symbols-outlined">thumb_down</span></button></div> 
@@ -212,32 +267,25 @@
                             </div>
                         </div>
                     </div>  
-                </div>
+
+                    <div class="ai-links-container">
+                        <a href="https://chatgpt.com/" target="_blank" class="btn-ai btn-chatgpt">
+                            <span class="material-symbols-outlined">bolt</span> ChatGPT
+                        </a>
+                        <a href="https://gemini.google.com/" target="_blank" class="btn-ai btn-gemini">
+                            <span class="material-symbols-outlined">auto_awesome</span> Gemini
+                        </a>
+                        <a href="https://claude.ai/" target="_blank" class="btn-ai btn-claude">
+                            <span class="material-symbols-outlined">psychology</span> Claude
+                        </a>
+                        <a href="https://copilot.microsoft.com/" target="_blank" class="btn-ai btn-copilot">
+                            <span class="material-symbols-outlined">flight_takeoff</span> Copilot
+                        </a>
+                    </div>
+
+                </div> 
+                
                 <div class="response-option-container">                    
-                    <div class="response-option" id="explore-variations-<%= i %>">
-                        <div class="material-symbols-outlined response-icon">style</div>
-                        <div class="response-description">Explore variations</div>
-                    </div>
-                    <div class="response-option" id="reduce-complexity-<%= i %>">
-                        <div class="material-symbols-outlined response-icon">signpost</div>
-                        <div class="response-description">Reduce complexity</div>
-                    </div>
-                    <div class="response-option" id="think-deeper-<%= i %>">
-                        <div class="material-symbols-outlined response-icon">psychology</div>
-                        <div class="response-description">Think deeper</div>
-                    </div>
-                    <div class="response-option" id="clarify-topic-<%= i %>">
-                        <div class="material-symbols-outlined response-icon">stylus_note</div>
-                        <div class="response-description">Clarify the topic</div>
-                    </div>
-                    <div class="response-option" id="get-preview-<%= i %>">
-                        <div class="material-symbols-outlined response-icon">forum</div>
-                        <div class="response-description">Preview conversation</div>
-                    </div>                
-                    <div class="response-option" id="save-recipe-<%= i %>">
-                        <div class="material-symbols-outlined response-icon">book_ribbon</div>
-                        <div class="response-description">Save to recipe book</div>
-                    </div>
                     <div class="loader-container hidden" id="little-loader-<%= i %>">
                         <div class="loader"></div>
                     </div>
@@ -263,7 +311,6 @@
             <div class="loader"></div>
         </div>
 
-
     </div>
 
     <div id="modal" class="modal">
@@ -287,9 +334,7 @@
     </div>
 
     <script id="MathJax-script" async src="/tex-chtml.js"></script>
-
     <script src="/toast.js"></script>
-
     <script src="/comments.js"></script>
     <script src="/homeHelpers.js"></script>
     <script src="/homeRecipes.js"></script>

@@ -64,14 +64,40 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     loadSelections();
 
-    document.addEventListener('click', hideBubbles);
+  document.addEventListener('click', hideBubbles);
 
-    document.getElementById('generate-button').addEventListener("click", generatePrompts);
-    document.getElementById('generate-more-button').addEventListener("click", generateMorePrompts);
+// Safely wire up buttons and dropdowns only if they exist on this page
+const generateButton = document.getElementById('generate-button');
+if (generateButton) {
+    generateButton.addEventListener("click", generatePrompts);
+}
 
-    document.getElementById("level").addEventListener("change", updateSubjectList);
-    document.getElementById("subject").addEventListener("change", loadRecipes);
-    document.getElementById("templates").addEventListener("change", displayTemplateSelectors);
+const generateMoreButton = document.getElementById('generate-more-button');
+if (generateMoreButton) {
+    generateMoreButton.addEventListener("click", generateMorePrompts);
+}
+
+const levelSelect = document.getElementById("level");
+if (levelSelect) {
+    // In this teacher-only build we are not loading subjects from the database
+    // levelSelect.addEventListener("change", updateSubjectList);
+}
+
+const subjectSelect = document.getElementById("subject");
+if (subjectSelect) {
+    // Likewise, do not auto-load recipes when the subject changes
+    // subjectSelect.addEventListener("change", loadRecipes);
+}
+
+const templatesSelect = document.getElementById("templates");
+if (templatesSelect) {
+    templatesSelect.addEventListener("change", displayTemplateSelectors);
+}
+// Wire up the new category dropdown
+    const categorySelect = document.getElementById("activityCategory");
+    if (categorySelect) {
+        categorySelect.addEventListener("change", updateActivityTasks);
+    }
 
     const textarea = document.getElementById('topic');
     textarea.addEventListener('keydown', (event) => {
@@ -159,4 +185,68 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
 });
+// --- Activity Menu Logic ---
 
+const ACTIVITY_DATA = {
+    "Assessments": [
+        "Multiple Choice Questions (MCQ)",
+        "True or False Questions",
+        "Practice Exam Questions",
+        "Open-ended / Essay Questions",
+        "Comparison Tasks",
+        "Fill in the Blanks"
+    ],
+    "In Class Tasks": [
+        "Think-Pair-Share",
+        "Socratic Questioning",
+        "Debate Topics",
+        "Group Discussion Prompts",
+        "Starter Activity",
+        "Plenary / Exit Ticket"
+    ],
+    "Research": [
+        "Guided Research Task",
+        "Fact-Checking Exercise",
+        "Literature Review Basics",
+        "Source Analysis"
+    ],
+    "Practical Tasks": [
+        "Step-by-step Demonstration Guide",
+        "Safety Checklist Creation",
+        "Scenario / Case Study",
+        "Role Play Scenario"
+    ],
+    "Feedback & Support": [
+        "Common Misconceptions List",
+        "Marking Rubric Generation",
+        "Student Feedback Generator",
+        "Revision Summary Notes"
+    ]
+};
+
+function updateActivityTasks() {
+    const category = document.getElementById("activityCategory").value;
+    const taskSelect = document.getElementById("activityType");
+
+    // Clear existing options
+    taskSelect.innerHTML = "";
+
+    if (category && ACTIVITY_DATA[category]) {
+        // Enable the dropdown
+        taskSelect.disabled = false;
+        
+        // Add options
+        ACTIVITY_DATA[category].forEach(task => {
+            const option = document.createElement("option");
+            option.value = task;
+            option.text = task;
+            taskSelect.add(option);
+        });
+    } else {
+        // Reset if no category selected
+        taskSelect.disabled = true;
+        const option = document.createElement("option");
+        option.text = "Select a category first...";
+        taskSelect.add(option);
+    }
+}

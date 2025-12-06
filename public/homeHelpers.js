@@ -31,7 +31,7 @@ function startAgain() {
         checkOverflow();
         document.getElementById("goto-dashboard").removeEventListener("click", confirmNavigation);
         document.getElementById("goto-recipes").removeEventListener("click", confirmNavigation);
-        loadRecipes();
+        // loadRecipes();   // not needed for now
     }
 }
 
@@ -202,32 +202,34 @@ function saveSelections() {
  * Restore level, subject and template selections from storage
  */
 async function loadSelections() {
+    try {
+        const levelSelect = document.getElementById("level");
+        const subjectSelect = document.getElementById("subject");
+        const templatesSelect = document.getElementById("templates");
 
-    const levelSelect = document.getElementById("level");
-    const subjectSelect = document.getElementById("subject");
-    const templatesSelect = document.getElementById("templates");
+        const savedTemplates = localStorage.getItem("selectedTemplates");
+        if (savedTemplates) {
+            templatesSelect.value = savedTemplates;
+        }
 
-    const savedTemplates = localStorage.getItem('selectedTemplates');
-    if (savedTemplates) {
-        templatesSelect.value = savedTemplates;
+        const savedLevel = localStorage.getItem("selectedLevel");
+        if (savedLevel) {
+            levelSelect.value = savedLevel;
+        }
+
+        const savedSubject = localStorage.getItem("selectedSubject");
+        if (savedSubject) {
+            subjectSelect.value = savedSubject;
+        }
+
+        // No subject loading, no dropdown population, no database calls
+        // Template selectors still work, so call that safely:
+
+        await displayTemplateSelectors();
+
+    } catch (err) {
+        console.error("Error loading selections.", err);
     }
-    await displayTemplateSelectors();
-
-    const savedLevel = localStorage.getItem('selectedLevel');
-    if (savedLevel) {
-        levelSelect.value = savedLevel;
-    }
-    await updateSubjectList();
-
-    const savedSubject = localStorage.getItem('selectedSubject');
-    if (savedSubject) {
-        subjectSelect.value = savedSubject;        
-    } else {
-        subjectSelect.value = "auto";        
-    }
-    await loadRecipes();
-
-
 }
 
 /**
@@ -280,13 +282,17 @@ async function updateSubjectList() {
  */
 async function displayTemplateSelectors() {
 
-    loadRecipes();
 
-    console.log("Display template selectors")
+console.log("Display template selectors")
 
-    const templateSelect = document.getElementById("templates");
-    
-    const selectedTemplate = templateSelect.value;
+const templateSelect = document.getElementById("templates");
+if (!templateSelect) {
+    // No templates dropdown on this page, so safely exit
+    return;
+}
+
+const selectedTemplate = templateSelect.value;
+
 
 
     localStorage.setItem('selectedTemplates', selectedTemplate);
@@ -478,7 +484,7 @@ function displayModal(modalContent, modalType = 1, originalPrompt = "", index = 
             } else {
                 console.log("Comment posted successfully");
                 let scrollPosition = window.scrollY;
-                await loadRecipes();
+                // await loadRecipes();   // disabled – home page no longer auto-loads recipes
                 window.scrollTo(0, scrollPosition);
             }
 
